@@ -18,6 +18,8 @@ def variabrain(code:str,*,
           log:bool=False,
           stepmode:bool=False,
           steptime:int=0):
+    # variabrainインタプリンタによって予約している文字たち
+    __SYSTEM_RESERVE_CHAR = ("[", "]", ">", "<", "+", "-", ",", ".", "(", ")")
 
     coded = tuple(code.strip())
     if sizemem > 0:
@@ -91,6 +93,21 @@ def variabrain(code:str,*,
     # ]に対応する[の辞書
     rbracketpos = {v:i for i, v in bracketpos.items()}
 
+    # ここからvariabrainのvariableの変数
+    # 変数のリスト
+    variables = {}
+    # 移動した場所を記憶するバッファ
+    buffer = []
+    # 丸括弧のリスト
+    circlebrackets = [(i, v) for v, i in enumerate(coded) if i == "(" or i == ")"]
+    # 丸括弧の解析
+    static_bracket_analysis(circlebrackets, "(", ")")
+    # 角括弧と同様、(に対する)
+    c_bracketpos = {v: bracket_searcher(circlebrackets, v) for v in (i[1] for i in circlebrackets if i[0] == "(")}
+    # `(`の前が予約文字ではないか
+    if any(((coded[i-1] in __SYSTEM_RESERVE_CHAR) for i in c_bracketpos)):
+        raise BracketError("System reserved character do not locate on before `(`.")
+
     if (stepmode or debug) and (not yiemode) and (not retmode):
         print("\n"+code.strip()+"\n")
 
@@ -151,6 +168,24 @@ def variabrain(code:str,*,
                     point[nowpoint] = ord(specialinputs.pop(0))
                 else:
                     point[nowpoint] = ord(list(input())[0])
+            # ここから下variabrainの機能
+            elif i == "(":
+                # variabrainで`(`を直接実行することはない。
+                # つまり、この説が実行されるのは完全におかしい。
+                raise BrainException("`(` was detected.")
+            elif i == ")":
+                n = buffer.pop()
+            else:
+                # characterに当たった時
+                if (num := c_bracketpos.get(n+1)) is not None:
+                    # 定義
+                    variables[i] = n+1
+                    n = num
+                elif (num := variables.get(i)):
+                    # 定義済みの物
+                    buffer.append(n)
+                    n = num
+                # 定義されてもなく、定義でもないものはコメントとして扱う。
             n += 1
             step += 1
             if log:
