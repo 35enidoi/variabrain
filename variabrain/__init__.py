@@ -1,4 +1,4 @@
 """# brainfuck super set that has variables."""
-from .brain import variabrain
+from variabrain.brain import variabrain
 
 __all__ = ["variabrain"]

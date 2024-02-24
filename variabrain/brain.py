@@ -1,6 +1,6 @@
 import time
 from shutil import get_terminal_size
-from .exceptions import *
+from variabrain.exceptions import *
 
 def variabrain(code:str,*,
           # ここはインタプリンタの設定関連
