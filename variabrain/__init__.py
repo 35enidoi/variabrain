@@ -1,4 +1,5 @@
 """# brainfuck super set that has variables."""
-from variabrain.brain import variabrain
+from variabrain.brain import interpreter
+from variabrain import exceptions
 
-__all__ = ["variabrain"]
+__all__ = ["interpreter, exceptions"]
