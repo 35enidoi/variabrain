@@ -206,7 +206,7 @@ def interpreter(code:str,*,
                     continue
                 elif retmode:
                     continue
-                passage = f"codeat;{n} codein;{i} step;{step} nowpoint;{nowpoint} point;{point} output;[{output}]\r"
+                passage = "codeat;{} codein;{} step;{} nowpoint;{} point;{} output;[{}]\r".format(n, i if i != "\n" else "", step, nowpoint, point, output)
                 upnum = passage.count("\n")+len(passage)//get_terminal_size().columns
                 print(passage+("\033[1A"*upnum),end="")
                 time.sleep(steptime)
