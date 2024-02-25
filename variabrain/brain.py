@@ -206,9 +206,9 @@ def interpreter(code:str,*,
                     continue
                 elif retmode:
                     continue
-                passage = "codeat;{} codein;{} step;{} nowpoint;{} point;{} output;[{}]\r".format(n, i if i != "\n" else "", step, nowpoint, point, output)
-                upnum = passage.count("\n")+len(passage)//get_terminal_size().columns
-                print(passage+("\033[1A"*upnum),end="")
+                passage = "codeat;{} codein;{} step;{} nowpoint;{} point;{} output;[{}]".format(n, i if i != "\n" else "", step, nowpoint, point, output)
+                upnum = output.count("\n")+(max(map(len, passage.split("\n")))//get_terminal_size().columns)
+                print(passage+"\033[1A"*upnum,end="\r")
                 time.sleep(steptime)
     except BrainException:
         raise
