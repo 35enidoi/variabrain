@@ -2,7 +2,7 @@ import time
 from shutil import get_terminal_size
 from variabrain.exceptions import *
 
-def variabrain(code:str,*,
+def interpreter(code:str,*,
           # ここはインタプリンタの設定関連
           speinp:str=None,
           retmode:bool=False,
