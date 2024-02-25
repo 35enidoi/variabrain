@@ -107,6 +107,16 @@ def interpreter(code:str,*,
     # `(`の前が予約文字ではないか
     if any(((coded[i-1] in __SYSTEM_RESERVE_CHAR) for i in c_bracketpos)):
         raise BracketError("System reserved character do not locate on before `(`.")
+    # (と)の間の角括弧のバランスが大丈夫か
+    for i, v in c_bracketpos.items():
+        balance = 0
+        for r in coded[i:v]:
+            if r == "[":
+                balance += 1
+            elif r == "]":
+                balance -= 1
+        if balance != 0:
+            raise BracketError("`[]` balance invalid among `()`")
 
     if (stepmode or debug) and (not yiemode) and (not retmode):
         print("\n"+code.strip()+"\n")
