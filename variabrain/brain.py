@@ -1,5 +1,6 @@
 import time
 from shutil import get_terminal_size
+from types import MappingProxyType
 from variabrain.exceptions import *
 
 def interpreter(code:str,*,
@@ -37,7 +38,7 @@ def interpreter(code:str,*,
     if retmode:
         returns = ""
     if yiemode:
-        yieldlist = []
+        yieldlist = list()
     nowpoint = 0
     n = 0
     bit = (2**sizebit)-1
@@ -89,21 +90,21 @@ def interpreter(code:str,*,
     # 角括弧の静的解析
     static_bracket_analysis(brackets, "[", "]")
     # [に対応する]の辞書
-    bracketpos = {v: bracket_searcher(brackets, v) for v in (i[1] for i in brackets if i[0] == "[")}
+    bracketpos = MappingProxyType({v: bracket_searcher(brackets, v) for v in (i[1] for i in brackets if i[0] == "[")})
     # ]に対応する[の辞書
-    rbracketpos = {v:i for i, v in bracketpos.items()}
+    rbracketpos = MappingProxyType({v:i for i, v in bracketpos.items()})
 
     # ここからvariabrainのvariableの変数
     # 変数のリスト
     variables = {}
     # 移動した場所を記憶するバッファ
-    buffer = []
+    buffer = list()
     # 丸括弧のリスト
-    circlebrackets = [(i, v) for v, i in enumerate(coded) if i == "(" or i == ")"]
+    circlebrackets = tuple([(i, v) for v, i in enumerate(coded) if i == "(" or i == ")"])
     # 丸括弧の解析
     static_bracket_analysis(circlebrackets, "(", ")")
     # 角括弧と同様、(に対する)
-    c_bracketpos = {v: bracket_searcher(circlebrackets, v) for v in (i[1] for i in circlebrackets if i[0] == "(")}
+    c_bracketpos = MappingProxyType({v: bracket_searcher(circlebrackets, v) for v in (i[1] for i in circlebrackets if i[0] == "(")})
     # `(`の前が予約文字ではないか
     if any(((coded[i-1] in __SYSTEM_RESERVE_CHAR) for i in c_bracketpos)):
         raise BracketError("System reserved character do not locate on before `(`.")
@@ -163,7 +164,7 @@ def interpreter(code:str,*,
                 elif stepmode:
                     output += returnchar
                 elif yiemode:
-                    yieldlist.append({"output":returnchar})
+                    yieldlist.append(MappingProxyType({"output":returnchar}))
                 else:
                     print(returnchar,end="")
             elif i == ",":
@@ -202,7 +203,7 @@ def interpreter(code:str,*,
                 logs += i
             if stepmode:
                 if yiemode:
-                    yieldlist.append({"codeat":n, "codein":i, "step":step, "nowpoint":nowpoint, "point":tuple(point), "output":output})
+                    yieldlist.append(MappingProxyType({"codeat":n, "codein":i, "step":step, "nowpoint":nowpoint, "point":tuple(point), "output":output}))
                     continue
                 elif retmode:
                     continue
